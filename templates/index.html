@@ -2,30 +2,33 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Фильм по настроению</title>
+    <title>AI Movie + Snake</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
 
+<canvas id="snake-bg"></canvas>
+
 <div class="container">
 
-    <h1>🎬 Подбор фильма по настроению</h1>
+    <h1>🎬 Фильм по настроению</h1>
 
     <form method="POST">
-        <textarea name="message" placeholder="Как ты себя чувствуешь?"></textarea>
+        <textarea name="message" placeholder="Как ты себя чувствуешь?">{{ user_text }}</textarea>
         <br>
         <button type="submit">Получить фильм</button>
     </form>
 
     {% if recommendation %}
     <div class="result">
-        <h3>Результат:</h3>
-        <p>{{ recommendation|safe }}</p>
+        {{ recommendation|safe }}
     </div>
     {% endif %}
 
 </div>
+
+<script src="{{ url_for('static', filename='snake.js') }}"></script>
 
 </body>
 </html>

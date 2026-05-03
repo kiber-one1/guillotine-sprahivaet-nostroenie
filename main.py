@@ -20,17 +20,14 @@ model = AutoModelForCausalLM.from_pretrained(
 def extract_film_title(text):
     if not text:
         return ""
-    match = re.search(r'"([^"]{2,100})"', text)
-    if match:
-        return match.group(1).strip()
+    m = re.search(r'"([^"]{2,100})"', text)
+    if m:
+        return m.group(1)
     return text.strip().splitlines()[0][:80]
 
 
 def generate_recommendation(mood):
-    prompt = (
-        f"Посоветуй один популярный фильм для человека, у которого {mood} настроение. "
-        f"Назови фильм и кратко объясни почему."
-    )
+    prompt = f"Посоветуй фильм для человека у которого {mood} настроение и кратко объясни почему"
 
     inputs = tokenizer(prompt, return_tensors="pt")
 
@@ -40,8 +37,7 @@ def generate_recommendation(mood):
         do_sample=True,
         top_p=0.9,
         temperature=0.8,
-        pad_token_id=tokenizer.eos_token_id,
-        no_repeat_ngram_size=2
+        pad_token_id=tokenizer.eos_token_id
     )
 
     text = tokenizer.decode(outputs[0], skip_special_tokens=True)
@@ -54,7 +50,7 @@ def index():
     user_text = ""
 
     if request.method == "POST":
-        user_text = request.form["message"]
+        user_text = request.form.get("message", "")
 
         result = sentiment_analyzer(user_text)[0]
         label = result["label"]
@@ -66,8 +62,8 @@ def index():
         else:
             mood = "нейтральное"
 
-        ai_text = extract_film_title(generate_recommendation(mood))
-        recommendation = f"Настроение: {mood}<br>Рекомендация: {ai_text}"
+        rec = extract_film_title(generate_recommendation(mood))
+        recommendation = f"Настроение: {mood}<br>Фильм: {rec}"
 
     return render_template(
         "index.html",
