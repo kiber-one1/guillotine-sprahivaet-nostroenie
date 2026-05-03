@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Фильм по настроению</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🎬 Подбор фильма по настроению</h1>
+
+    <form method="POST">
+        <textarea name="message" placeholder="Как ты себя чувствуешь?"></textarea>
+        <br>
+        <button type="submit">Получить фильм</button>
+    </form>
+
+    {% if recommendation %}
+    <div class="result">
+        <h3>Результат:</h3>
+        <p>{{ recommendation|safe }}</p>
+    </div>
+    {% endif %}
+
+</div>
+
+</body>
+</html>
